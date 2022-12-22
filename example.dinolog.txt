@@ -1,10 +1,11 @@
 title = Example
 author = Palash Bauri
+blog = https://palashbauri.in
 
----
-@abcd=>https://example.org/abcd.dinolog.txt
-@xyz=>https://example.com/xyz.dinolog.txt
----
+----
+@abcd = https://example.org/abcd.dinolog.txt
+@xyz = https://example.com/xyz.dinolog.txt
+----
 
 [[2022-12-22T06:29:30+0000]]
 This is another post
