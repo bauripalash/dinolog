@@ -1,0 +1,18 @@
+title = Example
+author = Palash Bauri
+
+---
+@abcd=>https://example.org/abcd.dinolog.txt
+@xyz=>https://example.com/xyz.dinolog.txt
+---
+
+[[2022-12-22T06:29:30+0000]]
+This is another post
+--0--
+
+[[2022-12-22T06:26:42+0000]]
+Hello World
+How are you
+--0--
+
+
