@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
 )
@@ -11,10 +12,26 @@ type MetaData struct {
 	Others map[string]string
 }
 
+type BlogData struct {
+	Meta    MetaData
+	Follows map[string]string
+	Posts   []BlogItem
+}
+
 type BlogItem struct {
 	Date     string
 	Text     string
 	BlogMeta map[string]string
+}
+
+func pprint(b *BlogData) {
+	ijson, err := json.MarshalIndent(b, "", "  ")
+
+	if err != nil {
+		return
+	}
+
+	fmt.Printf("%s\n", ijson)
 }
 
 func readOption(line string) (string, string, bool) {
@@ -26,35 +43,108 @@ func readOption(line string) (string, string, bool) {
 	return "", "", false
 }
 
-func popLine(slice []string, index int) []string {
-	return append(slice[:index], slice[index+1:]...)
+func popLines(slice []string, index int) []string {
+	return slice[index:]
 }
 
 func Parse(src string) {
 	data := strings.Split(src, "\n")
-	md := MetaData{Others: make(map[string]string)}
-
-	for index, item := range data {
+	blg := BlogData{Meta: MetaData{Others: make(map[string]string)}, Follows: make(map[string]string), Posts: make([]BlogItem, 0)}
+	lastindex := 0
+	//params parsing
+	for _, item := range data {
+		if strings.HasPrefix(item, "##") {
+			continue
+		}
 		if strings.HasPrefix(item, "----") {
 			break
 		}
 
-		fmt.Printf("%d |%s\n", index, item)
+		//fmt.Printf("%d |%s\n", index, item)
 		if key, value, ok := readOption(item); ok {
 
 			switch key {
 			case "title":
-				md.Title = value
+				blg.Meta.Title = value
 			case "author":
-				md.Author = value
+				blg.Meta.Author = value
 			default:
-				md.Others[key] = value
+				blg.Meta.Others[key] = value
 			}
+			lastindex += 1
+		}
 
+	}
+	data = popLines(data, lastindex)
+	isInsideFollowList := false
+	for index, item := range data {
+		if strings.HasPrefix(item, "----") {
+			isInsideFollowList = !isInsideFollowList
+			if !isInsideFollowList {
+				lastindex = index + 1
+				break
+			}
+		}
+
+		if isInsideFollowList {
+			if k, v, ok := readOption(item); ok {
+				if strings.HasPrefix(k, "@") {
+					blg.Follows[k] = v
+				}
+			}
 		}
 
 	}
 
-	fmt.Printf("%#v\n\n", md)
-	fmt.Println(strings.Join(data, "\n"))
+	data = popLines(data, lastindex)
+	posts := []BlogItem{}
+
+	tempItem := BlogItem{BlogMeta: make(map[string]string)}
+	insideBlogMeta := false
+	blogMetaLock := false
+	for _, item := range data {
+		item = strings.TrimSpace(item)
+		if strings.HasPrefix(item, "[[") { //Read Dates
+			if strings.HasSuffix(item, "]]") {
+				dt := strings.TrimPrefix(item, "[[")
+				dt = strings.TrimSuffix(dt, "]]")
+				tempItem.Date = dt
+				continue
+			}
+		}
+
+		if !strings.HasPrefix(item, "--0--") { // This Means post has not yet ended
+
+			if strings.HasPrefix(item, "++++") && !blogMetaLock { //Check for post metas
+				insideBlogMeta = !insideBlogMeta
+				if !insideBlogMeta {
+					blogMetaLock = true //One post can have only one meta block
+				}
+				continue
+			}
+
+			if insideBlogMeta && !blogMetaLock {
+				if k, v, ok := readOption(item); ok {
+					tempItem.BlogMeta[k] = v
+				}
+			} else {
+				tempItem.Text += item + "\n"
+			}
+
+		} else if strings.HasPrefix(item, "--0--") {
+			posts = append(posts, tempItem)
+			tempItem = BlogItem{BlogMeta: make(map[string]string)}
+			blogMetaLock = false
+			continue
+		}
+
+	}
+
+	blg.Posts = posts
+
+	//fmt.Printf("%#v\n", posts)
+
+	//fmt.Printf("%#v\n\n", md)
+	pprint(&blg)
+	//fmt.Println(strings.Join(data, "\n"))
 }

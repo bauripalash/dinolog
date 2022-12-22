@@ -8,10 +8,21 @@ blog = https://palashbauri.in
 ----
 
 [[2022-12-22T06:29:30+0000]]
+	++++
+	title = Hello
+	++++
+
 This is another post
+
+++++
+MetaLocking=Working
+++++
 --0--
 
 [[2022-12-22T06:26:42+0000]]
+	++++
+	draft=true
+	++++
 Hello World
 How are you
 --0--

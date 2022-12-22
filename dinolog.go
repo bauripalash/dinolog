@@ -15,6 +15,5 @@ func main() {
 		log.Fatalln("Failed to read dinolog file ->" + logfile)
 	}
 
-	//fmt.Printf("[+] dinolog file ==>\n\n%s<== file end" , string(data))
 	parser.Parse(string(data))
 }
