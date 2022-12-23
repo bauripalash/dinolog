@@ -7,6 +7,8 @@ blog = https://palashbauri.in
 @xyz = https://example.com/xyz.dinolog.txt
 ----
 
+>>>dinolog.2.txt
+<<<dinolog.0.txt
 [[2022-12-22T06:29:30+0000]]
 	++++
 	title = Hello
@@ -26,5 +28,3 @@ MetaLocking=Working
 Hello World
 How are you
 --0--
-
-

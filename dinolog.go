@@ -9,6 +9,10 @@ import (
 var logfile = "example.dinolog.txt"
 
 func main() {
+	if _, err := os.Stat(logfile); err != nil {
+		log.Fatalf("Dinologg file %s does not exist", logfile)
+		//fmt.Println(
+	}
 	data, err := os.ReadFile(logfile)
 
 	if err != nil {
