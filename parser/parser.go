@@ -7,16 +7,16 @@ import (
 )
 
 const (
-	DATE_START = "[["
-	DATA_END = "]]"
+	DATE_START      = "[["
+	DATA_END        = "]]"
 	PAGINATION_NEXT = ">>>"
 	PAGINATION_PREV = "<<<"
-	POST_END = "--0--"
-	COMMENT = "##"
-	FOLLOW = "@"
-	POST_META = "++++"
-	FOLLOW_BLOCK = "----"
-	CONFIG_DELIM = "="
+	POST_END        = "--0--"
+	COMMENT         = "##"
+	FOLLOW          = "@"
+	POST_META       = "++++"
+	FOLLOW_BLOCK    = "----"
+	CONFIG_DELIM    = "="
 )
 
 type MetaData struct {
@@ -77,7 +77,7 @@ func parsePagination(item string) (bool, string, bool) {
 	return false, "", false
 }
 
-func Parse(src string) {
+func Parse(src string) *BlogData {
 	data := strings.Split(src, "\n")
 	blg := BlogData{
 		Meta:       MetaData{Others: make(map[string]string)},
@@ -200,6 +200,7 @@ func Parse(src string) {
 	//fmt.Printf("%#v\n", posts)
 
 	//fmt.Printf("%#v\n\n", md)
-	pprint(&blg)
+	//pprint(&blg)
+	return &blg
 	//fmt.Println(strings.Join(data, "\n"))
 }
